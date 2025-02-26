@@ -32,10 +32,6 @@ def process_training_data(outdir, tstep=3000, nc=3):
     dy = ly / ny
     dz = lz / nz
 
-    xcoor = np.arange(nx) * dx + 0.5 * dx
-    ycoor = np.arange(ny) * dy + 0.5 * dy
-    zcoor = np.arange(nz) * dz + 0.5 * dz
-
     print("Loading grid data...")
     grid = np.loadtxt(f'{outdir}/lag_grid.txt')
     n3d = np.zeros((nx, ny, nz), dtype=int)
@@ -74,11 +70,11 @@ def process_training_data(outdir, tstep=3000, nc=3):
             for iy in range(ny):
                 for ix in range(nx):
                     cnt += 1
-                    sf[iz, iy, ix] = fdata[cnt-1, 0]
-                    Tf[iz, iy, ix] = fdata[cnt-1, 1]
-                    uf[iz, iy, ix] = fdata[cnt-1, 2]
-                    vf[iz, iy, ix] = fdata[cnt-1, 3]
-                    wf[iz, iy, ix] = fdata[cnt-1, 4]
+                    sf[ix, iy, iz] = fdata[cnt-1, 0]
+                    Tf[ix, iy, iz] = fdata[cnt-1, 1]
+                    uf[ix, iy, iz] = fdata[cnt-1, 2]
+                    vf[ix, iy, iz] = fdata[cnt-1, 3]
+                    wf[ix, iy, iz] = fdata[cnt-1, 4]
         return sf, Tf, uf, vf, wf
 
     print("Processing Eulerian data...")
@@ -177,10 +173,6 @@ def process_training_data(outdir, tstep=3000, nc=3):
                         ix = (ix0 + dix + nx) % nx
                         iy = (iy0 + diy + ny) % ny
                         iz = (iz0 + diz + nz) % nz
-                        #fid.write(f'{sf[iz, iy, ix]:.10e} {Tf[iz, iy, ix]:.10e} {uf[iz, iy, ix]:.10e} '
-                        #        f'{vf[iz, iy, ix]:.10e} {wf[iz, iy, ix]:.10e}\n')
-                        #fid.write(f'{n3d[iz, iy, ix]:d}\n')
-                        #fid.write(' '.join(f'{hist3d[iz, iy, ix, ih]:d}' for ih in range(nh)) + '\n')
                         fid.write(f'{sf[ix, iy, iz]:.10e} {Tf[ix, iy, iz]:.10e} {uf[ix, iy, iz]:.10e} '
                                 f'{vf[ix, iy, iz]:.10e} {wf[ix, iy, iz]:.10e}\n')
                         fid.write(f'{n3d[ix, iy, iz]:d}\n')

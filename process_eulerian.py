@@ -27,7 +27,7 @@ def process_eulerian_data(eulerdir, fname, outdir, tstep=3000, nx=32, ny=32, nz=
                     ixf = int(ix / di)
                     iyf = int(iy / di)
                     izf = int(iz / di)
-                    vfilt[izf, iyf, ixf] += vdns[iz, iy, ix]
+                    vfilt[ixf, iyf, izf] += vdns[iz, iy, ix]
         return vfilt / (di ** 3)
 
     # Read and process data
@@ -68,7 +68,7 @@ def process_eulerian_data(eulerdir, fname, outdir, tstep=3000, nx=32, ny=32, nz=
     plt.title('Full Resolution (512x512)')
 
     plt.subplot(122)
-    plt.contourf(vfilt_dict['mixing_ratio'][0,:,:], cmap='viridis')
+    plt.contourf(vfilt_dict['mixing_ratio'][:,:,0], cmap='viridis')
     plt.colorbar(label='Mixing Ratio (Filtered)')
     plt.title(f'Filtered Resolution ({nx}x{ny})')
 
@@ -88,5 +88,5 @@ def process_eulerian_data(eulerdir, fname, outdir, tstep=3000, nx=32, ny=32, nz=
                     fid.write(f'{vf[ix,iy,iz]:10e} ')
                     fid.write(f'{wf[ix,iy,iz]:10e}\n')
 
-    print(f"Output saved to {outdir}/eul_m.txt")
+    print(f"Output saved to {outdir}/eul.txt")
     print("Contour plots saved as contour_comparison.png")
