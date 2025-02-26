@@ -1,58 +1,91 @@
 # main.py
+import os
+import time
 from process_eulerian import process_eulerian_data
 from process_lagrangian import process_lagrangian_data
 from process_training import process_training_data
-import os
-import config
-import path
 
 def main():
-    # Eulerian parameters and paths
-    eulerdir = path.eulerdir
+    """
+    Main function to process Eulerian, Lagrangian, and Training data for multiple timesteps.
+    Measures execution time and provides feedback on completion.
+    """
+    # Base directories (assuming these are correctly defined in a separate path module)
+    try:
+        import path
+        eulerdir = path.eulerdir
+        lagdir = path.lagdir
+        outputdir = path.outputdir
+    except ImportError:
+        print("Error: 'path' module not found. Please ensure it exists and defines 'eulerdir' and 'lagdir'.")
+        return
 
-    # Lagrangian parameters and paths
-    lagdir = path.lagdir
+
+    # Fixed parameters
     iskip = 1
-    lx = 51.2
-    ly = 51.2
-    lz = 51.2
-    nx = 32
-    ny = 32
-    nz = 32
-    nm = 300
-    rminh = 0
-    rmaxh = 20
-    nh = 20
-    nc = 3  # Stencil size
+    lx, ly, lz = 51.2, 51.2, 51.2  # Domain sizes
+    nx, ny, nz = 32, 32, 32       # Grid resolutions
+    nm = 300                      # Number of superdroplets
+    rminh, rmaxh = 0, 20          # Radius bounds
+    nh = 20                       # Number of histogram bins
+    nc = 3                        # Stencil size for training
 
-    tstep_list = [6000]
+    # List of timesteps to process
+    tstep_list = [3000, 6000]
 
+    # Process each timestep
     for tstep in tstep_list:
-        fname_lag = f"{path.lagdir}/Ascii_xyz_rqt.{tstep:06d}.dat"
-        fname_euler = f"{path.eulerdir}/Eulerian_{tstep:06d}.nc"
-        
-        # Output directory for the time step
-        outdir = f"outdir_sk{iskip}_nm{nm}_nx{nx}"
-        os.makedirs(outdir, exist_ok=True)
+        print(f"\nProcessing timestep {tstep:06d}...")
+        start_time_total = time.time()
 
+        # Define file paths and output directory
+        fname_lag = f"{lagdir}/Ascii_xyz_rqt.{tstep:06d}.dat"
+        fname_euler = f"{eulerdir}/Eulerian_{tstep:06d}.nc"
+        outdirname = f"outdir_sk{iskip}_nm{nm}_nx{nx}"
+        outdir = f"{outputdir}/{outdirname}/{tstep:06d}"
 
-        # Call Eulerian processing
+        # Create output directory if it doesn't exist
+        try:
+            os.makedirs(outdir, exist_ok=True)
+        except OSError as e:
+            print(f"Error: Could not create output directory '{outdir}': {e}")
+            continue
+
+        # Check if input files exist
+        if not os.path.exists(fname_euler):
+            print(f"Error: Eulerian input file '{fname_euler}' not found.")
+            continue
+        if not os.path.exists(fname_lag):
+            print(f"Error: Lagrangian input file '{fname_lag}' not found.")
+            continue
+
+        # Eulerian processing
         print("Starting Eulerian processing...")
-        process_eulerian_data(eulerdir, fname_euler, outdir, 
-                             tstep, nx, ny, nz)
-        print("Eulerian processing completed.\n")
+        start_time = time.time()
+        process_eulerian_data(eulerdir, fname_euler, outdir, tstep, nx, ny, nz)
+        euler_time = time.time() - start_time
+        print(f"Eulerian processing completed in {euler_time:.2f} seconds.\n")
 
-        # Call Lagrangian processing
+        # Lagrangian processing
         print("Starting Lagrangian processing...")
-        process_lagrangian_data(lagdir, eulerdir, outdir, tstep, 
-                              fname_euler, fname_lag, iskip, lx, ly, lz, 
-                              nx, ny, nz, nm, rminh, rmaxh, nh)
-        print("Lagrangian processing completed.\n")
+        start_time = time.time()
+        process_lagrangian_data(lagdir, eulerdir, outdir, tstep, fname_euler, fname_lag,
+                               iskip, lx, ly, lz, nx, ny, nz, nm, rminh, rmaxh, nh)
+        lag_time = time.time() - start_time
+        print(f"Lagrangian processing completed in {lag_time:.2f} seconds.\n")
 
-        # Call Training data processing
+        # Training data processing
         print("Starting Training data processing...")
+        start_time = time.time()
         process_training_data(outdir, tstep, nc)
-        print("Training data processing completed.")
+        train_time = time.time() - start_time
+        print(f"Training data processing completed in {train_time:.2f} seconds.")
+
+        # Total time for this timestep
+        total_time = time.time() - start_time_total
+        print(f"\nData generation completed for timestep {tstep:06d}.")
+        print(f"Total processing time: {total_time:.2f} seconds "
+              f"(Eulerian: {euler_time:.2f}s, Lagrangian: {lag_time:.2f}s, Training: {train_time:.2f}s)")
 
 if __name__ == "__main__":
     main()
