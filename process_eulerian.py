@@ -68,7 +68,7 @@ def process_eulerian_data(eulerdir, fname, outdir, tstep=3000, nx=32, ny=32, nz=
     plt.title('Full Resolution (512x512)')
 
     plt.subplot(122)
-    plt.contourf(vfilt_dict['mixing_ratio'][:,:,0], cmap='viridis')
+    plt.contourf(vfilt_dict['mixing_ratio'][:,:,0].T, cmap='viridis')
     plt.colorbar(label='Mixing Ratio (Filtered)')
     plt.title(f'Filtered Resolution ({nx}x{ny})')
 
