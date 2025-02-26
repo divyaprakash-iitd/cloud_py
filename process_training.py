@@ -177,9 +177,13 @@ def process_training_data(outdir, tstep=3000, nc=3):
                         ix = (ix0 + dix + nx) % nx
                         iy = (iy0 + diy + ny) % ny
                         iz = (iz0 + diz + nz) % nz
-                        fid.write(f'{sf[iz, iy, ix]:.10e} {Tf[iz, iy, ix]:.10e} {uf[iz, iy, ix]:.10e} '
-                                f'{vf[iz, iy, ix]:.10e} {wf[iz, iy, ix]:.10e}\n')
-                        fid.write(f'{n3d[iz, iy, ix]:d}\n')
-                        fid.write(' '.join(f'{hist3d[iz, iy, ix, ih]:d}' for ih in range(nh)) + '\n')
+                        #fid.write(f'{sf[iz, iy, ix]:.10e} {Tf[iz, iy, ix]:.10e} {uf[iz, iy, ix]:.10e} '
+                        #        f'{vf[iz, iy, ix]:.10e} {wf[iz, iy, ix]:.10e}\n')
+                        #fid.write(f'{n3d[iz, iy, ix]:d}\n')
+                        #fid.write(' '.join(f'{hist3d[iz, iy, ix, ih]:d}' for ih in range(nh)) + '\n')
+                        fid.write(f'{sf[ix, iy, iz]:.10e} {Tf[ix, iy, iz]:.10e} {uf[ix, iy, iz]:.10e} '
+                                f'{vf[ix, iy, iz]:.10e} {wf[ix, iy, iz]:.10e}\n')
+                        fid.write(f'{n3d[ix, iy, iz]:d}\n')
+                        fid.write(' '.join(f'{hist3d[ix, iy, iz, ih]:d}' for ih in range(nh)) + '\n')
 
     print("Training data generation complete!")
