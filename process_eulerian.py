@@ -1,11 +1,11 @@
-# gen_eulerian.py
+# process_eulerian.py
 import numpy as np
 from numba import njit
 import netCDF4 as nc
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 
-def gen_eulerian_data(eulerdir, fname, outdir, tstep=3000, nx=32, ny=32, nz=32):
+def process_eulerian_data(eulerdir, fname, outdir, tstep=3000, nx=32, ny=32, nz=32):
     # Constants
     rho0 = 1.06
     rhovs = 0.0039
