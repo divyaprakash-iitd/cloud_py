@@ -73,7 +73,7 @@ def process_eulerian_data(eulerdir, fname, outdir, tstep=3000, nx=32, ny=32, nz=
     plt.title(f'Filtered Resolution ({nx}x{ny})')
 
     plt.tight_layout()
-    plt.savefig('contour_comparison.png')
+    plt.savefig(f'contour_comparison_{tstep}.png',dpi=150)
     plt.close()
 
     # Write output file

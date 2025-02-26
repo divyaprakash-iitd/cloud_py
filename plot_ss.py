@@ -34,5 +34,7 @@ plt.ylabel("Filtered Supersaturation (s)")
 plt.title("Comparison of Filtered and Actual Supersaturation")
 plt.legend()
 plt.grid(True)
+plot_filename = 'training_data_plot.png'
+plt.savefig(plot_filename,dpi=150)
 plt.show()
 

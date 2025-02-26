@@ -61,8 +61,8 @@ def plot_droplet_slice_efficient(tstep, z_center, z_thickness):
     print("\nReading super droplet data...")
     # Read super droplet data (this should be much smaller)
     outdirname = f"outdir_sk{config.iskip}_nm{config.nm}_nx{config.nx}"
-    outdir = f"{outdirname}/{tstep:06d}"
-    super_data = np.loadtxt("lag_super.txt", skiprows=1)
+    outdir = f"{outdirname}/{tstep:06d}/lag_super.txt"
+    super_data = np.loadtxt(outdir, skiprows=1)
     
     # Filter super droplets
     super_mask = (super_data[:, 2] >= z_min) & (super_data[:, 2] <= z_max)
@@ -108,10 +108,8 @@ def plot_droplet_slice_efficient(tstep, z_center, z_thickness):
     print(f"Super droplets in slice: {len(super_x):,}")
 
 if __name__ == "__main__":
-	istart = config.tstep
-	iend=config.tstep2
-	for tstep in range(istart,iend,1000):
-		z_center = config.lz / 3  
-		z_thickness = 1.0  # Thickness of the slice
+    tstep = 3000
+    z_center = 51.2 / 3  
+    z_thickness = 1.0  # Thickness of the slice
     
-		plot_droplet_slice_efficient(tstep, z_center, z_thickness)
+    plot_droplet_slice_efficient(tstep, z_center, z_thickness)
