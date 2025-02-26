@@ -78,7 +78,7 @@ def process_eulerian_data(eulerdir, fname, outdir, tstep=3000, nx=32, ny=32, nz=
 
     # Write output file
     print("Writing output file...")
-    with open(f'{outdir}/eul_m.txt', 'w') as fid:
+    with open(f'{outdir}/eul.txt', 'w') as fid:
         for iz in tqdm(range(nz)):
             for iy in range(ny):
                 for ix in range(nx):
