@@ -140,11 +140,13 @@ def process_training_data(outdir, tstep=3000, nc=3):
         y3 = (iy0 + np.arange(-1, 2) + 0.5) * dy
         z3 = (iz0 + np.arange(-1, 2) + 0.5) * dz
 
-        sf_interp = RegularGridInterpolator((x3, y3, z3), sf_loc, method='linear', bounds_error=False, fill_value=2)
-        Tf_interp = RegularGridInterpolator((x3, y3, z3), Tf_loc, method='linear', bounds_error=False, fill_value=2)
-        uf_interp = RegularGridInterpolator((x3, y3, z3), uf_loc, method='linear', bounds_error=False, fill_value=2)
-        vf_interp = RegularGridInterpolator((x3, y3, z3), vf_loc, method='linear', bounds_error=False, fill_value=2)
-        wf_interp = RegularGridInterpolator((x3, y3, z3), wf_loc, method='linear', bounds_error=False, fill_value=2)
+        fill_value = None
+        method = 'linear'
+        sf_interp = RegularGridInterpolator((x3, y3, z3), sf_loc, method=method, bounds_error=False, fill_value=fill_value)
+        Tf_interp = RegularGridInterpolator((x3, y3, z3), Tf_loc, method=method, bounds_error=False, fill_value=fill_value)
+        uf_interp = RegularGridInterpolator((x3, y3, z3), uf_loc, method=method, bounds_error=False, fill_value=fill_value)
+        vf_interp = RegularGridInterpolator((x3, y3, z3), vf_loc, method=method, bounds_error=False, fill_value=fill_value)
+        wf_interp = RegularGridInterpolator((x3, y3, z3), wf_loc, method=method, bounds_error=False, fill_value=fill_value)
 
         point = np.array([tab['x'][i], tab['y'][i], tab['z'][i]])
         sf_inter[i] = float(sf_interp(point)[0])
