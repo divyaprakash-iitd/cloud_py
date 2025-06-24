@@ -11,6 +11,11 @@ from sklearn.metrics import r2_score
 import tensorflow as tf
 tf.config.set_visible_devices([], 'GPU')
 
+# Check and make dirs
+dirs = ["images", "npy_data"]
+[os.makedirs(d, exist_ok=True) for d in dirs]
+
+
 # Load the features and labels data
 # X = np.load('features.npy')
 X = np.load('features_hist.npy')
