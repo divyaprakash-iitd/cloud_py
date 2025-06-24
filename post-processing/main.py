@@ -31,7 +31,7 @@ def main():
     nc = 3                        # Stencil size for training
 
     # List of timesteps to process
-    tstep_list = [3000, 6000]
+    tstep_list = [1000*i for i in range(4,10)]
 
     # Process each timestep
     for tstep in tstep_list:
