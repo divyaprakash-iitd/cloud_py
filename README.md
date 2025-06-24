@@ -1,11 +1,11 @@
 # Machine Learning-Based Estimation of Superdroplet Growth Rates Using DNS Data
 
-This repository contains code of the entire workflow of the this project. 
+This repository houses the complete workflow for estimating superdroplet growth rates using machine learning techniques applied to Direct Numerical Simulation (DNS) data.
 
-The `post-processing` directory contains codes which reads the Lagrangian and Eulerian data generated from the DNS at each time-step and processes it to generate superdroplets' data that can be used for training in the form of `training.txt` files. 
+- **post-processing**: This directory includes scripts that ingest Lagrangian and Eulerian data from DNS simulations and transform it into a structured format (`training.txt` files) suitable for machine learning model training.
 
-The `training` directory contains the codes for processing the `training.txt` files in order to generate features and labels that can be fed into the Machine Learning (ML) model. There are two types of scaling which has been explored, each in a separate script. It also contains the script that trains and validates the model and generates the relevant data and plots.  
+- **training**: This directory features scripts that process the `training.txt` files to extract features and labels for the machine learning model. It explores two distinct scaling methods, each implemented in separate scripts. Additionally, it includes code for training and validating the model, along with generating relevant data outputs and visualizations.
 
-The `aposteriori` directory contains the code to carry out the a posteriori analysis on the unseen data.
+- **aposteriori**: This directory contains scripts designed to perform a posteriori analysis on unseen data, evaluating the model's performance and generalization capabilities.
 
-More details can be found in each repository's own README files.
+For more detailed information, please refer to each directory's own README file.
