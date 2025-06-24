@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import joblib
 from sklearn.preprocessing import StandardScaler
+from tqdm import tqdm
 
 time_counter = 0
 
@@ -69,7 +70,7 @@ all_ssdata = []
 all_labels = []
 
 # Load all data
-for fname in file_path:
+for fname in tqdm(file_path):
     sdrop_1, sdrop_2, sdropdatales, nactdrops, histdatales, ssdata, labels = generate_features_labels(fname)
     all_sdrop_1.append(sdrop_1)
     all_sdrop_2.append(sdrop_2)
@@ -90,7 +91,7 @@ all_ssdata = np.concatenate(all_ssdata, axis=0)
 all_labels = np.concatenate(all_labels, axis=0)
 
 # Combine features for obtaing min-max scalers
-original_shape = all_sdropdatales.shape 
+original_shape = all_sdropdatales.shape
 all_sdrop_2_reshaped = all_sdrop_2.reshape(-1, 1, 5)
 all_sdropdatales_reshaped = all_sdropdatales.reshape(-1, 27, 5)
 combined = np.concatenate([all_sdrop_2_reshaped, all_sdropdatales_reshaped], axis=1)
@@ -103,20 +104,21 @@ for i in range(5):
 # min_max_scalers is now a list of tuples: [(min0, max0), (min1, max1), ...]
 np.save('min_max_scalers.npy', min_max_scalers)
 
+################### Scale according to type of data ####################
+# Scale sdrop_1
 # Factors for sdrop_1
 cellsize = 51.2 / 32
-maxrad = 15
+maxrad = 15.1
 sdrop_1_factors = np.array([cellsize, cellsize, cellsize, maxrad])
-
-# Scale sdrop_1
 scaled_all_sdrop_1 = all_sdrop_1 / sdrop_1_factors
 
-# Scale sdrop_2 and sdropdatales using min-max scaling
+# Scale sdrop_2 using min-max scaling
 scaled_all_sdrop_2 = np.zeros_like(all_sdrop_2)
 for i in range(5):
     min_val, max_val = min_max_scalers[i]
     scaled_all_sdrop_2[:, i] = (all_sdrop_2[:, i] - min_val) / (max_val - min_val)
 
+# Scale sdropdatales using min-max scaling
 scaled_all_sdropdatales_reshaped = np.zeros_like(all_sdropdatales_reshaped)
 for i in range(all_sdropdatales_reshaped.shape[0]):
     for j in range(5):
@@ -125,30 +127,8 @@ for i in range(all_sdropdatales_reshaped.shape[0]):
 
 scaled_all_sdropdatales = scaled_all_sdropdatales_reshaped.reshape(original_shape)
 # Concatenate features for scaling
-# all_features = np.concatenate((all_sdrop_1, all_sdrop_2, all_sdropdatales), axis=1)
 all_scaled_features = np.concatenate((scaled_all_sdrop_1, scaled_all_sdrop_2, scaled_all_sdropdatales), axis=1)
 
-# # Initialize and fit a single scaler
-# scaler = StandardScaler()
-# scaler.fit(all_features)
-
-# # Save the fitted scaler
-# joblib.dump(scaler, 'scaler.pkl')
-
-# # Transform the concatenated features
-# all_features_scaled = scaler.transform(all_features)
-
-# # Split the scaled features back into subsets (optional, for clarity)
-# n_sdrop_1 = all_sdrop_1.shape[1]  # 4 features
-# n_sdrop_2 = all_sdrop_2.shape[1]  # 5 features
-# n_sdropdatales = all_sdropdatales.shape[1]  # 135 features
-
-# sdrop_1_scaled = all_features_scaled[:, :n_sdrop_1]
-# sdrop_2_scaled = all_features_scaled[:, n_sdrop_1:n_sdrop_1 + n_sdrop_2]
-# sdropdatales_scaled = all_features_scaled[:, n_sdrop_1 + n_sdrop_2:]
-
-# Combine features for final feature matrix
-# X = np.concatenate((sdrop_1_scaled, sdrop_2_scaled, sdropdatales_scaled), axis=1)
 X = all_scaled_features
 y = all_labels
 ss = all_ssdata
