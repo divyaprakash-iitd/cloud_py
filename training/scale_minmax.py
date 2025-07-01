@@ -57,8 +57,8 @@ def generate_features_labels(file_path):
 
 # File paths
 base_path = "/media/divyaprakash/data/cloud_py/post-processing/outdir_sk1_nm300_nx32"
-file_path = [f"{base_path}/{i:06d}/training.txt" for i in range(1000, 2000, 1000)]
-# file_path = [f"/home/divyaprakash/cloud_tf_cuda/nikita/10_files/training_{i:06d}.txt" for i in np.arange(1000, 10001, 1000)]
+file_path = [f"{base_path}/{i:06d}/training.txt" for i in range(1000, 11000, 1000)]
+#file_path = [f"/home/divyaprakash/cloud_tf_cuda/nikita/10_files/training_{i:06d}.txt" for i in np.arange(1000, 10001, 1000)]
 
 # Initialize lists to collect data
 all_sdrop_1 = []
@@ -129,7 +129,15 @@ scaled_all_sdropdatales = scaled_all_sdropdatales_reshaped.reshape(original_shap
 # Concatenate features for scaling
 all_scaled_features = np.concatenate((scaled_all_sdrop_1, scaled_all_sdrop_2, scaled_all_sdropdatales), axis=1)
 
-X = all_scaled_features
+# Calculate mean for each column (feature)
+feature_means = np.mean(all_scaled_features, axis=0)
+
+# Subtract the mean from each column
+centered_features = all_scaled_features - feature_means
+
+
+#X = all_scaled_features
+X = centered_features
 y = all_labels
 ss = all_ssdata
 
