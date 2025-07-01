@@ -9,6 +9,7 @@ from tensorflow.keras.layers import Dense, Dropout, BatchNormalization
 from tensorflow.keras.optimizers import Adam
 from sklearn.metrics import r2_score
 import tensorflow as tf
+import os
 tf.config.set_visible_devices([], 'GPU')
 
 # Check and make dirs
@@ -59,7 +60,7 @@ model.add(Dense(1, activation='linear'))
 model.compile(optimizer=Adam(learning_rate=0.0005), loss='mean_squared_error')
 
 # Train the model and track training history
-history = model.fit(X_train, y_train, epochs=30, batch_size=256, validation_data=(X_val, y_val))
+history = model.fit(X_train, y_train, epochs=50, batch_size=256, validation_data=(X_val, y_val))
 
 # Plot training and validation curves
 plt.plot(history.history['loss'], label='Training Loss')
@@ -70,7 +71,7 @@ plt.legend()
 plt.tight_layout()
 plt.savefig('./images/loss_nm300.png', dpi=300)
 #plt.show()
-
+plt.close()
 # Make predictions on the test set
 predictions = model.predict(X_test)
 
