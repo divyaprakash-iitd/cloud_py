@@ -10,6 +10,7 @@ from tensorflow.keras.optimizers import Adam
 from sklearn.metrics import r2_score
 import tensorflow as tf
 import os
+import joblib
 tf.config.set_visible_devices([], 'GPU')
 
 # Check and make dirs
@@ -33,11 +34,13 @@ idorg = np.arange(len(X))
 X_train, X_temp, y_train, y_temp, ss_train, ss_temp, idorg_train, idorg_temp = train_test_split(X, y, ss, idorg, test_size=0.3, random_state=42)
 X_val, X_test, y_val, y_test, ss_val, ss_test, idorg_val, idorg_test = train_test_split(X_temp, y_temp, ss_temp, idorg_temp, test_size=0.5, random_state=42)
 
-# # Feature scaling using StandardScaler
-# scaler = StandardScaler()
-# X_train_scaled = scaler.fit_transform(X_train)
-# X_val_scaled = scaler.transform(X_val)
-# X_test_scaled = scaler.transform(X_test) 
+# Feature scaling using StandardScaler
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_val_scaled = scaler.transform(X_val)
+X_test_scaled = scaler.transform(X_test) 
+# Save the fitted scaler
+joblib.dump(scaler, 'scaler.pkl')
 
 # Build the MLP model
 model = Sequential()
