@@ -44,7 +44,6 @@ params = {headers[i]: float(values[i]) for i in range(len(headers))}
 lx, ly, lz = params['lx'], params['ly'], params['lz']
 nx, ny, nz, nh = int(params['nx']), int(params['ny']), int(params['nz']), int(params['nh'])
 rmin, rmax = params['rmin'], params['rmax']
-rvec = (np.arange(nh) + 0.5) * (rmax - rmin) / nh
 
 dx, dy, dz = lx / nx, ly / ny, lz / nz
 
@@ -136,7 +135,7 @@ for it in range(nfiles):
     z3 = np.linspace(0.5*lz/nz, lz - 0.5*lz/nz, nz)
     
     fill_value = None #2
-    method = 'cubic'
+    method = 'linear'
     sf_interp = RegularGridInterpolator((x3, y3, z3), sf, method=method, bounds_error=False, fill_value=fill_value)
     Tf_interp = RegularGridInterpolator((x3, y3, z3), Tf, method=method, bounds_error=False, fill_value=fill_value)
     uf_interp = RegularGridInterpolator((x3, y3, z3), uf, method=method, bounds_error=False, fill_value=fill_value)
