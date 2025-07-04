@@ -1,0 +1,5 @@
+# File types to ignore
+.npy
+.pkl
+.png
+.pdf
