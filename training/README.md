@@ -1,6 +1,13 @@
 # README: Data Scaling and Model Training
 
-This document outlines the data scaling techniques implemented in `scale_minmax.py` and `scale_all.py`, and the machine learning model training process in `train_ml_1.py`. These scripts are designed to preprocess data and train a model for predicting supersaturation values in a computational fluid dynamics context.
+In the current approach, the file `generate_features_labels.py` is used to generate the features and labels. Data scaling is handled separately in the training script, `scale_and_train.py`. In this script, the scaler is **fitted only on the training data** and then used to transform the training, validation, and test datasets. The fitted scaler is also saved for use on unseen data during inference.
+
+**Note:** Earlier, scaling was performed on the entire dataset at once. That approach is no longer followed. The current recommended workflow is:
+
+1. Generate datasets using `generate_features_labels.py`.
+2. Train the model using `scale_and_train.py`.
+
+For reference, this document also describes older scripts like `scale_minmax.py` and `scale_all.py` that were previously used for data scaling, as well as `train_ml_1.py` which was used for model training.
 
 ---
 
@@ -95,12 +102,10 @@ The `train_ml_1.py` script trains a Multi-Layer Perceptron (MLP) to predict supe
 
 ---
 
-## Updated Scaling Approach
-Following discussions, scaling in `scale_minmax.py` uses fixed values tailored to each feature set’s physical properties:
-- **Offsets (`dx`, `dy`, `dz`)**: Divided by `cellsize`.
-- **Radius (`r`)**: Divided by `maxrad`.
-- **Filtered Data (`s`, `T`, `u`, `v`, `w`)**: Min-max scaled using global min/max values.
+## Training in `scale_and_train.py`
+Same as `train_ml_1.py`, except it is meant to be used with `generate_features_labels.py` only. This is because the training script itself takes care of the scaling.
 
-This ensures physically meaningful normalization, improving model performance over uniform scaling methods.
+---
+
 
 ---
