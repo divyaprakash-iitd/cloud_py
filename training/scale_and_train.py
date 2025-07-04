@@ -44,7 +44,7 @@ joblib.dump(scaler, 'scaler.pkl')
 
 # Build the MLP model
 model = Sequential()
-model.add(Dense(1024, input_shape=(X_train.shape[1],), activation='relu'))
+model.add(Dense(1024, input_shape=(X_train_scaled.shape[1],), activation='relu'))
 model.add(Dropout(0.3))  # Add dropout with a dropout rate of 0.5 (adjust as needed)
 model.add(Dense(512, activation='relu'))
 model.add(BatchNormalization())
