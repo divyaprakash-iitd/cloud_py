@@ -1,5 +1,19 @@
+# Ignore compiled Python files
+__pycache__/
+*.swp
+
+
+# Ignore training outputs and data
+training/output/
+
 # File types to ignore
-.npy
-.pkl
-.png
-.pdf
+*.npy
+*.pkl
+*.png
+*.pdf
+
+# Ignore post-processing output
+post-processing/outdir_*/
+
+# Optional: ignore all hidden swap and temp files
+*~
