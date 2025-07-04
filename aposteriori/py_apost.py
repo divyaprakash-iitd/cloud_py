@@ -240,14 +240,14 @@ for it in range(nfiles):
     #-----------------------------------------------------#
     # Scale the feature vectors according to the saved scaler 
     # Load the scaler
-    scaler = joblib.load('./all_scaling/scaler.pkl')
+    scaler = joblib.load('../training/scaler.pkl')
     
     # Transform the concatenated features
     features_scaled = scaler.transform(features_array)
     print(f"Shape of scaled array: {features_scaled.shape}")
     # Feed the feature array to the ml model to get predictions for each superdroplet.
     # 1. Load the trained model
-    model = keras.models.load_model('all_scaling/output/model_ml_1.keras')  # Load your Keras model
+    model = keras.models.load_model('../training/output/model_ml_1.keras')  # Load your Keras model
     
     # 2. Ensure X_new_scaled is correct
     print("Shape of new data:", features_scaled.shape)  # Should be (N_samples, N_features)
