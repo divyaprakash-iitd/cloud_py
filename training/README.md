@@ -1,4 +1,4 @@
-# README: Data Scaling and Model Training
+#Data Scaling and Model Training
 
 In the current approach, the file `generate_features_labels.py` is used to generate the features and labels. Data scaling is handled separately in the training script, `scale_and_train.py`. In this script, the scaler is **fitted only on the training data** and then used to transform the training, validation, and test datasets. The fitted scaler is also saved for use on unseen data during inference.
 
