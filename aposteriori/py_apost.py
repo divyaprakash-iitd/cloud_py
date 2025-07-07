@@ -63,9 +63,6 @@ xcoor = (np.arange(0, nx) * lx/nx) + 0.5 * lx/nx
 ycoor = xcoor.copy()
 zcoor = xcoor.copy()
 
-# Create meshgrid
-xm, ym, zm = np.meshgrid(xcoor, ycoor, zcoor, indexing='xy')
-
 # Create random source points
 xs = np.random.uniform(lx/3.0, 2*lx/3.0, ns)
 ys = np.random.uniform(0, lx, ns)
@@ -100,11 +97,11 @@ for it in range(nfiles):
     print("Loading Eulerian data...")
     fdata = np.loadtxt(files[it])
     
-    sf = np.reshape(fdata[:, 0], (nx, ny, nz))
-    Tf = np.reshape(fdata[:, 1], (nx, ny, nz))
-    uf = np.reshape(fdata[:, 2], (nx, ny, nz))
-    vf = np.reshape(fdata[:, 3], (nx, ny, nz))
-    wf = np.reshape(fdata[:, 4], (nx, ny, nz))
+    sf = np.reshape(fdata[:, 0], (nz, ny, nx))
+    Tf = np.reshape(fdata[:, 1], (nz, ny, nx))
+    uf = np.reshape(fdata[:, 2], (nz, ny, nx))
+    vf = np.reshape(fdata[:, 3], (nz, ny, nx))
+    wf = np.reshape(fdata[:, 4], (nz, ny, nx))
     
     #-----------------------------------------------------#
     #  Interpolate properties at superdroplets' locations
