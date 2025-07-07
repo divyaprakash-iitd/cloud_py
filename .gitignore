@@ -7,6 +7,7 @@ __pycache__/
 training/output/
 extracted_euler_filter_data_files/
 aposteriori/output/
+test_codes/
 
 # File types to ignore
 *.npy
