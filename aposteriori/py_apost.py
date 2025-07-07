@@ -143,7 +143,8 @@ for it in range(nfiles):
     for i in range(ns):
         # Create a 3D point for the i-th superdroplet using its (x, y, z) coordinates
         # Result is a NumPy array in the form [x, y, z]
-        points_array[i,:] = np.array([tab['x'][i], tab['y'][i], tab['z'][i]])
+        # points_array[i,:] = np.array([tab['x'][i], tab['y'][i], tab['z'][i]])
+        points_array[i,:] = np.array([tab['z'][i], tab['y'][i], tab['x'][i]])
 
     # Interpolate in batches
     batch_size = 5000  # Adjust based on your system's memory
@@ -202,16 +203,16 @@ for it in range(nfiles):
                     iz = (iz0 + diz + nz) % nz
 
                     ifeat = ifeat + 1 
-                    features_array[i,ifeat] = sf[ix, iy, iz] 
+                    features_array[i,ifeat] = sf[iz, iy, ix] 
                     ifeat = ifeat + 1 
-                    features_array[i,ifeat] = Tf[ix, iy, iz]  
+                    features_array[i,ifeat] = Tf[iz, iy, ix]  
                     ifeat = ifeat + 1 
-                    features_array[i,ifeat] = uf[ix, iy, iz]  
+                    features_array[i,ifeat] = uf[iz, iy, ix]  
                     ifeat = ifeat + 1 
-                    features_array[i,ifeat] = vf[ix, iy, iz]  
+                    features_array[i,ifeat] = vf[iz, iy, ix]  
                     ifeat = ifeat + 1 
-                    features_array[i,ifeat] = wf[ix, iy, iz]  
         
+                    features_array[i,ifeat] = wf[iz, iy, ix]  
     print(f"Shape of feature array: {features_array.shape}")
 
     #-----------------------------------------------------#
@@ -270,7 +271,7 @@ for it in range(nfiles):
         plt.figure(figsize=(12, 5))
         
         # First subplot: Histogram
-        plt.subplot(1, 2, 1)
+        plt.subplot(1, 3, 1)
         edges= np.arange(0,18)
         h = plt.hist(rs/1e-6, bins=edges, density=True)
         #h = plt.hist(rs/1e-6, density=True)
@@ -279,20 +280,19 @@ for it in range(nfiles):
         plt.xlabel('Radius (µm)')
         
         # Second subplot: Contour plot with droplets
-        plt.subplot(1, 2, 2)
+        plt.subplot(1, 3, 2)
         cont = plt.contourf(xcoor, zcoor, s2d)
-        plt.colorbar(cont)
-        
-        ## Select a slice of droplets in the middle of the y-domain to avoid superposition
-        #slice_width = ly / 10  # e.g., 10% of the domain width
-        #y_center = ly / 2
-        #in_slice = (ys > y_center - slice_width / 2) & (ys < y_center + slice_width / 2)
-
-        #plt.scatter(xs[in_slice], zs[in_slice], color='k', s=5)  # Plot droplets in the slice
-        plt.scatter(xs, ys, color='k', s=5)  # Plot droplets in the slice
+        plt.scatter(xs, zs, color='k', s=5)  # Plot droplets in the slice
         plt.xlabel('x')
         plt.ylabel('z')
-        plt.title(f'Time = {tme:.2f}')
+        plt.title(f'xy-Time = {tme:.2f}')
+        
+        plt.subplot(1, 3, 3)
+        cont = plt.contourf(xcoor, zcoor, s2d)
+        plt.scatter(xs, ys, color='k', s=5)  # Plot droplets in the slice
+        plt.xlabel('x')
+        plt.ylabel('y')
+        plt.title(f'xz-Time = {tme:.2f}')
         
         # Super title
         plt.suptitle('From a posteriori simulation')
