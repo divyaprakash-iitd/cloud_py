@@ -23,7 +23,7 @@ def batched_interpolation(points_array, interp_func, batch_size=10000):
 
 
 os.makedirs('output', exist_ok=True)
-files = glob.glob('../extracted_euler_filter_data_files/e*')
+files = sorted(glob.glob('../extracted_euler_filter_data_files/e*'))
 outdir = '.'
 nc = 3
 
@@ -99,31 +99,12 @@ for it in range(nfiles):
     #-----------------------------------------------------#
     print("Loading Eulerian data...")
     fdata = np.loadtxt(files[it])
-    sf = np.zeros((nx, ny, nz))
-    Tf = np.zeros((nx, ny, nz))
-    uf = np.zeros((nx, ny, nz))
-    vf = np.zeros((nx, ny, nz))
-    wf = np.zeros((nx, ny, nz))
     
-    @njit
-    def process_eulerian_data(nx, ny, nz, fdata, sf, Tf, uf, vf, wf):
-        cnt = 0
-        for iz in range(nz):
-            for iy in range(ny):
-                for ix in range(nx):
-                    cnt += 1
-                    sf[ix, iy, iz] = fdata[cnt-1, 0]
-                    Tf[ix, iy, iz] = fdata[cnt-1, 1]
-                    uf[ix, iy, iz] = fdata[cnt-1, 2]
-                    vf[ix, iy, iz] = fdata[cnt-1, 3]
-                    wf[ix, iy, iz] = fdata[cnt-1, 4]
-        return sf, Tf, uf, vf, wf
-    
-    print("Processing Eulerian data...")
-    with tqdm(total=nz*ny*nx) as pbar:
-        sf, Tf, uf, vf, wf = process_eulerian_data(nx, ny, nz, fdata, sf, Tf, uf, vf, wf)
-        pbar.update(nz*ny*nx)
-    
+    sf = np.reshape(fdata[:, 0], (nx, ny, nz))
+    Tf = np.reshape(fdata[:, 1], (nx, ny, nz))
+    uf = np.reshape(fdata[:, 2], (nx, ny, nz))
+    vf = np.reshape(fdata[:, 3], (nx, ny, nz))
+    wf = np.reshape(fdata[:, 4], (nx, ny, nz))
     
     #-----------------------------------------------------#
     #  Interpolate properties at superdroplets' locations
@@ -136,11 +117,12 @@ for it in range(nfiles):
     
     fill_value = None #2
     method = 'linear'
-    sf_interp = RegularGridInterpolator((x3, y3, z3), sf, method=method, bounds_error=False, fill_value=fill_value)
-    Tf_interp = RegularGridInterpolator((x3, y3, z3), Tf, method=method, bounds_error=False, fill_value=fill_value)
-    uf_interp = RegularGridInterpolator((x3, y3, z3), uf, method=method, bounds_error=False, fill_value=fill_value)
-    vf_interp = RegularGridInterpolator((x3, y3, z3), vf, method=method, bounds_error=False, fill_value=fill_value)
-    wf_interp = RegularGridInterpolator((x3, y3, z3), wf, method=method, bounds_error=False, fill_value=fill_value)
+    # There is not much clarity if the order of indices in (x3,y3,z3) match with those of sf. 
+    sf_interp = RegularGridInterpolator((z3, y3, x3), sf, method=method, bounds_error=False, fill_value=fill_value)
+    Tf_interp = RegularGridInterpolator((z3, y3, x3), Tf, method=method, bounds_error=False, fill_value=fill_value)
+    uf_interp = RegularGridInterpolator((z3, y3, x3), uf, method=method, bounds_error=False, fill_value=fill_value)
+    vf_interp = RegularGridInterpolator((z3, y3, x3), vf, method=method, bounds_error=False, fill_value=fill_value)
+    wf_interp = RegularGridInterpolator((z3, y3, x3), wf, method=method, bounds_error=False, fill_value=fill_value)
 
     
     # Create a dictionary to hold the superdroplet properties
@@ -260,7 +242,6 @@ for it in range(nfiles):
 
     # Placeholder prediction
     ss = sf_inter.copy()
-    seff = sf_inter.copy()
 
     seff = np.squeeze(predictions)    
     rs2 = np.maximum(rs2 + 2 * dt * Kr * seff, 0.0)
@@ -284,10 +265,7 @@ for it in range(nfiles):
     #-----------------------------------------------------#
     if it % 12 == 0:
         # Compute 2D average along y-axis
-        s2d = np.zeros((nx, nz))
-        for iy in range(ny):
-            s2d += np.squeeze(sf[:, iy, :])
-        s2d /= ny
+        s2d = np.mean(sf, axis=1)  # Shape will be (32, 32)
         
         tme = it * dt
         
@@ -305,9 +283,16 @@ for it in range(nfiles):
         
         # Second subplot: Contour plot with droplets
         plt.subplot(1, 2, 2)
-        cont = plt.contourf(xcoor, zcoor, s2d.T)
+        cont = plt.contourf(xcoor, zcoor, s2d)
         plt.colorbar(cont)
-        plt.scatter(xs, zs, color='k', s=5)  # 'k' for black, 's' for marker size
+        
+        ## Select a slice of droplets in the middle of the y-domain to avoid superposition
+        #slice_width = ly / 10  # e.g., 10% of the domain width
+        #y_center = ly / 2
+        #in_slice = (ys > y_center - slice_width / 2) & (ys < y_center + slice_width / 2)
+
+        #plt.scatter(xs[in_slice], zs[in_slice], color='k', s=5)  # Plot droplets in the slice
+        plt.scatter(xs, ys, color='k', s=5)  # Plot droplets in the slice
         plt.xlabel('x')
         plt.ylabel('z')
         plt.title(f'Time = {tme:.2f}')
@@ -316,6 +301,6 @@ for it in range(nfiles):
         plt.suptitle('From a posteriori simulation')
         outfname = f'output/LES_dt_0p04_t{tme:.2f}.jpg'
         plt.savefig(outfname, dpi=300, format='jpeg', bbox_inches='tight')
-    
+        plt.close()
         #plt.pause(0.01)  # Keep this after savefig to ensure plot is updated
    
