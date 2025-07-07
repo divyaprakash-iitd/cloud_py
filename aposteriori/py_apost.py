@@ -285,14 +285,14 @@ for it in range(nfiles):
         plt.scatter(xs, zs, color='k', s=5)  # Plot droplets in the slice
         plt.xlabel('x')
         plt.ylabel('z')
-        plt.title(f'xy-Time = {tme:.2f}')
+        plt.title(f'xz-Time = {tme:.2f}')
         
         plt.subplot(1, 3, 3)
         cont = plt.contourf(xcoor, zcoor, s2d)
         plt.scatter(xs, ys, color='k', s=5)  # Plot droplets in the slice
         plt.xlabel('x')
         plt.ylabel('y')
-        plt.title(f'xz-Time = {tme:.2f}')
+        plt.title(f'xy-Time = {tme:.2f}')
         
         # Super title
         plt.suptitle('From a posteriori simulation')
